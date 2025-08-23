@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Yahoo Weather App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light text-center p-5">
+  <div class="container">
+    <h1 class="mb-4">🌦️Weather App</h1>
+    <div class="input-group mb-3 w-50 mx-auto">
+      <input type="text" id="city" class="form-control" placeholder="Enter city name">
+      <button class="btn btn-success" onclick="getWeather()">Get Weather</button>
+    </div>
+    <div id="result" class="mt-4"></div>
+  </div>
+  <script>
+    
+    const options = {
+      method: 'GET',
+      headers: {
+        'x-rapidapi-key': '7432748f4dmshae1a34f452c0042p1e4193jsn97c24c9c94e4',
+        'x-rapidapi-host': 'yahoo-weather5.p.rapidapi.com'
+      }
+    };
+    function getWeather() {
+      const city = document.getElementById('city').value;
+      const result = document.getElementById('result');
+
+      if (!city) {
+        result.innerHTML = '<p class="text-danger">Please enter a city name.</p>';
+        return;
+      }
+      fetch(`https://yahoo-weather5.p.rapidapi.com/weather?location=${city}&format=json&u=c`, options)
+        .then(response => {
+          if (!response.ok) throw new Error('City not found');
+          return response.json();
+        })
+        .then(data => {
+          const location = data.location.city + ', ' + data.location.country;
+          const condition = data.current_observation.condition;
+          const temp = condition.temperature;
+          const text = condition.text;
+          result.innerHTML = `
+            <h3>${location}</h3>
+            <p>🌡️ Temperature: ${temp}°C</p>
+            <p>☁️ Condition: ${text}</p>
+          `;
+        })
+        .catch(error => {
+          result.innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
+        });
+    }
+  </script>
+
+</body>
+</html>
